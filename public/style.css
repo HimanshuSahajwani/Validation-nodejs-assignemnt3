@@ -1,0 +1,118 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 25px 15px;
+    font-family: Arial, sans-serif;
+    background: #eef2f7;
+    color: #222;
+}
+
+.container {
+    max-width: 850px;
+    margin: auto;
+    padding: 25px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    color: #174ea6;
+}
+
+h1, .subtitle {
+    text-align: center;
+}
+
+.subtitle {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin: 15px 0 6px;
+}
+
+input, select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+input:focus, select:focus {
+    outline: 2px solid #8bb7ff;
+}
+
+button {
+    margin-top: 18px;
+    padding: 11px 18px;
+    border: none;
+    border-radius: 5px;
+    background: #174ea6;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.error {
+    display: block;
+    color: #d93025;
+    margin-top: 5px;
+    font-size: 13px;
+}
+
+#message {
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.success {
+    color: #188038;
+}
+
+.failure {
+    color: #d93025;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: #174ea6;
+    color: white;
+}
+
+tbody tr:nth-child(even) {
+    background: #f4f6f9;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+    }
+}

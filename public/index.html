@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server-Side Validation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Student Registration</h1>
+        <p class="subtitle">Node.js Server-Side Validation</p>
+
+        <form id="studentForm">
+            <label for="name">Student Name</label>
+            <input type="text" id="name" name="name"
+                   placeholder="Enter full name" required>
+            <small id="nameError" class="error"></small>
+
+            <label for="roll">Roll Number</label>
+            <input type="text" id="roll" name="roll"
+                   placeholder="Enter roll number" required>
+            <small id="rollError" class="error"></small>
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email"
+                   placeholder="student@example.com" required>
+            <small id="emailError" class="error"></small>
+
+            <label for="course">Course</label>
+            <select id="course" name="course" required>
+                <option value="">Select a course</option>
+                <option value="Computer Engineering">Computer Engineering</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Electronics Engineering">Electronics Engineering</option>
+            </select>
+            <small id="courseError" class="error"></small>
+
+            <button type="submit">Register Student</button>
+        </form>
+
+        <p id="message" role="status" aria-live="polite"></p>
+
+        <h2>Registered Students</h2>
+        <button type="button" id="viewStudents">View Students</button>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Roll Number</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Course</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTable">
+                    <tr>
+                        <td colspan="4">Click View Students to load records.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById("studentForm");
+        const message = document.getElementById("message");
+
+        const fields = ["name", "roll", "email", "course"];
+
+        function clearErrors() {
+            fields.forEach(field => {
+                document.getElementById(field + "Error").textContent = "";
+            });
+
+            message.textContent = "";
+            message.className = "";
+        }
+
+        function showErrors(errors) {
+            fields.forEach(field => {
+                document.getElementById(field + "Error").textContent =
+                    errors[field] || "";
+            });
+        }
+
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            clearErrors();
+
+            const data = {
+                name: document.getElementById("name").value,
+                roll: document.getElementById("roll").value,
+                email: document.getElementById("email").value,
+                course: document.getElementById("course").value
+            };
+
+            try {
+                const response = await fetch("/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    showErrors(result.errors || {});
+                    message.textContent =
+                        result.message || "Registration failed.";
+                    message.className = "failure";
+                    return;
+                }
+
+                message.textContent = result.message;
+                message.className = "success";
+
+                form.reset();
+                await loadStudents();
+
+            } catch (error) {
+                message.textContent =
+                    "Unable to connect to the server. Please try again.";
+                message.className = "failure";
+            }
+        });
+
+        async function loadStudents() {
+            const table = document.getElementById("studentTable");
+
+            try {
+                const response = await fetch("/students");
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error("Could not load students.");
+                }
+
+                table.replaceChildren();
+
+                if (result.students.length === 0) {
+                    const row = table.insertRow();
+                    const cell = row.insertCell();
+                    cell.colSpan = 4;
+                    cell.textContent = "No students registered yet.";
+                    return;
+                }
+
+                result.students.forEach(student => {
+                    const row = table.insertRow();
+
+                    [student.roll, student.name,
+                     student.email, student.course].forEach(value => {
+                        const cell = row.insertCell();
+                        cell.textContent = value;
+                    });
+                });
+
+            } catch (error) {
+                message.textContent = "Unable to load student records.";
+                message.className = "failure";
+            }
+        }
+
+        document.getElementById("viewStudents")
+            .addEventListener("click", loadStudents);
+    </script>
+
+</body>
+</html>
